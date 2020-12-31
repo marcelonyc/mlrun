@@ -91,6 +91,7 @@ class SparkJobSpec(KubeResourceSpec):
         self,
         command=None,
         args=None,
+        sparkconf=None,
         image=None,
         mode=None,
         volumes=None,
@@ -119,6 +120,7 @@ class SparkJobSpec(KubeResourceSpec):
         super().__init__(
             command=command,
             args=args,
+            sparkconf=sparkconf,
             image=image,
             mode=mode,
             volumes=volumes,
@@ -288,6 +290,7 @@ class SparkRuntime(KubejobRuntime):
                 self.spec.command = "local://" + self.spec.command
             update_in(job, "spec.mainApplicationFile", self.spec.command)
         update_in(job, "spec.arguments", self.spec.args or [])
+        update_in(job, "spec.SparkConf", self.spec.sparkconf or {})
         resp = self._submit_job(job, meta.namespace)
         # name = get_in(resp, 'metadata.name', 'unknown')
 
